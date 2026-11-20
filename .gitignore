@@ -1,0 +1,16 @@
+# Build
+target/
+
+# Maven wrapper: downloaded automatically
+.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# System
+.DS_Store
