@@ -31,8 +31,11 @@ jobs:
     name: Test on Java ${{ matrix.java }}
     runs-on: ubuntu-latest
     strategy:
+      # One broken JDK download must not cancel the other versions.
+      fail-fast: false
       matrix:
-        java: [ '8', '11', '17', '21', '25' ]
+        # Java 8 is pinned: setup-java fails the checksum check of Temurin 8.0.514+1 (2026-11-20).
+        java: [ '8.0.512+9', '11', '17', '21', '25' ]
     steps:
       - uses: actions/checkout@v7
 
