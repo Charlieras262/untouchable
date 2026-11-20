@@ -1,0 +1,27 @@
+/**
+ * Global styles. Infima variables use a teal palette that matches the logo.
+ */
+
+:root {
+  --ifm-color-primary: #00796b;
+  --ifm-color-primary-dark: #006d60;
+  --ifm-color-primary-darker: #00675b;
+  --ifm-color-primary-darkest: #00554b;
+  --ifm-color-primary-light: #008576;
+  --ifm-color-primary-lighter: #008b7c;
+  --ifm-color-primary-lightest: #009d8b;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* Lighter palette in dark mode for readability. */
+[data-theme='dark'] {
+  --ifm-color-primary: #4db6ac;
+  --ifm-color-primary-dark: #3eaa9f;
+  --ifm-color-primary-darker: #3aa096;
+  --ifm-color-primary-darkest: #30847b;
+  --ifm-color-primary-light: #62bfb6;
+  --ifm-color-primary-lighter: #6cc3bb;
+  --ifm-color-primary-lightest: #8bd0c9;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}

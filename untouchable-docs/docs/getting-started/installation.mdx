@@ -1,0 +1,105 @@
+---
+sidebar_position: 1
+title: Installation
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Installation
+
+## 1. Get the artifacts
+
+Untouchable is split into two modules:
+
+| Artifact | Contents | Dependencies |
+| --- | --- | --- |
+| `io.qzz.toshiro:untouchable-core` | API, seal, cryptography, policies | None required; Bouncy Castle optional |
+| `io.qzz.toshiro:untouchable-pdf` | PDF format | `untouchable-core`, Apache PDFBox 3.0.5, Bouncy Castle 1.80 |
+
+To work with PDFs you only declare `untouchable-pdf`; it brings the core with it.
+
+:::info Not on Maven Central yet
+Version 0.1.0 is a preview and is not published. Install it in your local Maven repository from the
+source code:
+
+```bash
+git clone https://github.com/Charlieras262/untouchable.git
+cd untouchable
+./mvnw install -DskipTests
+```
+
+All you need is JDK 8 or later: the Maven wrapper downloads Maven itself.
+:::
+
+## 2. Add the dependency
+
+<Tabs groupId="build-tool">
+  <TabItem value="maven" label="Maven" default>
+
+```xml title="pom.xml"
+<dependency>
+  <groupId>io.qzz.toshiro</groupId>
+  <artifactId>untouchable-pdf</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+</dependency>
+```
+
+  </TabItem>
+  <TabItem value="gradle-kotlin" label="Gradle (Kotlin)">
+
+```kotlin title="build.gradle.kts"
+repositories {
+    mavenLocal() // until the library is published
+    mavenCentral()
+}
+
+dependencies {
+    implementation("io.qzz.toshiro:untouchable-pdf:0.1.0-SNAPSHOT")
+}
+```
+
+  </TabItem>
+  <TabItem value="gradle-groovy" label="Gradle (Groovy)">
+
+```groovy title="build.gradle"
+repositories {
+    mavenLocal() // until the library is published
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'io.qzz.toshiro:untouchable-pdf:0.1.0-SNAPSHOT'
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## 3. Check your Java version
+
+| Java | Ed25519 provider | What you need |
+| --- | --- | --- |
+| 15 and later | The JDK | Nothing else. |
+| 8 – 14 | Bouncy Castle | `bcprov-jdk18on` on the classpath. `untouchable-pdf` already brings it. |
+
+If you use **only** `untouchable-core` on Java 8 – 14, add Bouncy Castle yourself:
+
+```xml title="pom.xml"
+<dependency>
+  <groupId>org.bouncycastle</groupId>
+  <artifactId>bcprov-jdk18on</artifactId>
+  <version>1.80</version>
+</dependency>
+```
+
+:::warning PDFBox 2.x in the same application
+`untouchable-pdf` needs **PDFBox 3.x**. PDFBox 3 changed its API, so an application that also depends on
+PDFBox 2.x will hit `NoSuchMethodError` or `ClassNotFoundException` at runtime. Move the whole application to
+PDFBox 3.x. Likewise, remove old Bouncy Castle artifacts (`*-jdk15on`) so the same classes are not on the
+classpath twice.
+:::
+
+## Next
+
+Seal and verify [your first PDF](./first-seal.md).

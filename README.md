@@ -8,7 +8,7 @@ signatures.
 - **Apache 2.0** license.
 - Supported format today: **PDF**.
 
-Specification: [SPEC.md](SPEC.md) · The compatibility spike that validated the design lives in the private `untouchable-spike` repository.
+Documentation: [charlieras262.github.io/untouchable](https://charlieras262.github.io/untouchable/) (source in [untouchable-docs](untouchable-docs)) · Specification: [SPEC.md](SPEC.md) · The compatibility spike that validated the design lives in the private `untouchable-spike` repository.
 
 > Status: **0.1.0-SNAPSHOT (phase F1)**, not yet published to Maven Central.
 

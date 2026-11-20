@@ -1,0 +1,105 @@
+---
+sidebar_position: 6
+title: Spring Boot
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Spring Boot
+
+Untouchable is a plain Java library with no framework dependency, so it works in Spring Boot 2.x (Java 8+) and
+3.x (Java 17+).
+
+:::note
+The library is tested on Java 8 – 25, but not yet inside a Spring Boot application. The recommendations below
+follow from how both are built.
+:::
+
+## Register a bean
+
+`Untouchable` is immutable and thread-safe: register it once as a singleton.
+
+```java title="UntouchableConfig.java"
+@Configuration
+public class UntouchableConfig {
+
+    @Bean
+    public Untouchable untouchable(UntouchableProperties props) {
+        PrivateKey privateKey = Ed25519.privateKey(Base64.getDecoder().decode(props.getPrivateKey()));
+        PublicKey publicKey = Ed25519.publicKey(Base64.getDecoder().decode(props.getPublicKey()));
+        return Untouchable.builder()
+                .handler(new PdfFormatHandler())   // explicit registration (see below)
+                .discoverHandlers(false)
+                .signer(Ed25519.signer(privateKey, props.getKeyId()))
+                .keyResolver(KeyResolver.of(props.getKeyId(), Ed25519.verifier(publicKey)))
+                .build();
+    }
+}
+```
+
+<Tabs groupId="spring-config">
+  <TabItem value="properties" label="Properties class" default>
+
+```java title="UntouchableProperties.java"
+@ConfigurationProperties(prefix = "untouchable")
+public class UntouchableProperties {
+    private String keyId;
+    private String privateKey; // Base64 PKCS#8
+    private String publicKey;  // Base64 X.509
+    // getters and setters
+}
+```
+
+  </TabItem>
+  <TabItem value="yaml" label="application.yml">
+
+```yaml title="application.yml"
+untouchable:
+  key-id: key-2026
+  private-key: ${UNTOUCHABLE_PRIVATE_KEY}   # from the environment or a secrets manager
+  public-key: ${UNTOUCHABLE_PUBLIC_KEY}
+```
+
+  </TabItem>
+</Tabs>
+
+Never commit the private key to `application.yml`; take it from the environment, Vault or a KMS.
+
+## Use it in a controller
+
+```java title="DocumentController.java"
+@RestController
+@RequestMapping("/documents")
+class DocumentController {
+    private final Untouchable untouchable;
+
+    DocumentController(Untouchable untouchable) {
+        this.untouchable = untouchable;
+    }
+
+    @PostMapping("/{id}/verify")
+    VerificationResponse verify(@PathVariable String id, @RequestParam MultipartFile file) throws IOException {
+        VerificationResult r = untouchable.verify(file.getBytes(), VerifyOptions.expectDocId(id));
+        return VerificationResponse.from(r); // map to your own DTO
+    }
+}
+```
+
+Map the result to your own DTO instead of returning `VerificationResult` directly, so your API does not depend
+on the library's classes.
+
+## Things to keep in mind
+
+- **Register the PDF handler explicitly.** `ServiceLoader` discovery should also work inside Spring Boot's
+  executable JAR, but explicit registration removes the doubt.
+- **PDFBox 3.x only.** If another dependency brings PDFBox 2.x, align everything on 3.x. Exclude old Bouncy
+  Castle artifacts (`*-jdk15on`).
+- **`commons-logging`.** PDFBox depends on it and Spring uses `spring-jcl`. It usually works as is; if Spring
+  warns about it, exclude `commons-logging` from the dependency.
+- **Headless rendering.** Verification renders pages to locate changes. Spring Boot runs with
+  `java.awt.headless=true` by default, so it works on servers without a display.
+- **Memory.** The API takes `byte[]`; the whole document is in memory. The default limit is 256 MB
+  (`Untouchable.builder().maxDocumentBytes(...)`). Combine it with Spring's `spring.servlet.multipart.max-file-size`.
+- **CPU.** Content verification of a 50-page PDF takes about 0.3–0.5 s; the certified fast path about 10–16 ms.
+  Run heavy verifications off the request thread if you expect large files.
