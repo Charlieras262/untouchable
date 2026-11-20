@@ -374,6 +374,7 @@ until a spike round confirms it. It is updated in each round and in each library
 | Tool | Version | Operating system | Status | Verified operations |
 |---|---|---|---|---|
 | Adobe Acrobat Reader | Continuous Release **2026.003.22110**, 64-bit | **Windows** | ✅ Compatible | Save as; signing with text, vector-graphic and raster-image appearances; second signature; signing pre-created fields under DocMDP P=2. Detects: comment, form fill, print to PDF (Microsoft Print to PDF). |
+| Adobe Acrobat Reader + **library 0.1.0-SNAPSHOT** | 2026.003.22110 | Windows | ✅ Compatible | Library-sealed PDFs: save as, sign (non-certified, `CONTENT`), sign one and two declared fields of a certified PDF (incremental, `CERTIFIED_REVISIONS`). Comment detected (`MODIFIED`) or blocked by Acrobat under DocMDP P=2. |
 | Ghostscript (`pdfwrite`) | 10.08.0 | Linux | ❌ Not compatible (expected) | Rewrites the whole document and removes the seal: always `NO_SEAL`. |
 
 ### Environment where it was verified
@@ -476,7 +477,7 @@ Pending: other tools, determinism across operating systems and the external corp
 | F1 | ✅ `core` + `pdf`: seal/verify, statuses, per-page report, `strict`, `signatures-only` and `signatures-and-forms` policies, non-certified mode. 0.1.0-SNAPSHOT |
 | F1.0b | ✅ DocMDP, declared signature fields and fast path by revisions, bound to the issuer's certificate. Between 12 and 33 times faster than content verification (10–50 pages) |
 | F1.1 | ✅ Change location with tiles and the signature overlap warning |
-| F1.2 | ✅ Tests on Java 8, 11, 17, 21 and 25 (test suite + cross test). ⏳ Acrobat round with PDFs sealed by the library |
+| F1.2 | ✅ Tests on Java 8, 11, 17, 21 and 25 (test suite + cross test). ✅ Short Acrobat round with PDFs sealed by the library (6/6 as expected) |
 | F2 | Images |
 | F3 | Office (OOXML) |
 | F4 | Text |

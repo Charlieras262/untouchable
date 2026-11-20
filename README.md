@@ -105,8 +105,8 @@ Details and restrictions in [SPEC §10.1](SPEC.md):
 - **Java 8, 11, 17, 21 and 25** (Eclipse Temurin, Linux x64) and OpenJDK 27: build and 48/48 tests on each.
 - **Across JDKs:** a seal made on any of those versions verifies the same way on all the others
   (5×5 cross test).
-- Adobe Acrobat Reader 2026.003 (Windows) behavior was verified with the spike prototype. It still has to
-  be repeated with documents sealed by this library.
+- Adobe Acrobat Reader 2026.003 (Windows): the seal of PDFs sealed by this library survives saving and
+  signing (certified and non-certified), and comments are detected or blocked by Acrobat.
 
 ## Build
 
